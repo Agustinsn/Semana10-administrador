@@ -101,18 +101,6 @@ function FormProductos({
                     <labell className="form-label">
                         Categoria
                     </labell>
-                   {/* <input type="texto" 
-                    list="categorias" 
-                    className="form-control"
-                    name="id_categorias"
-                    value={value.id_categorias}
-                    onChange={(e)=>{actualizarInput(e)}}/>
-                    <datalist id="categorias">
-                    {categorias.map((cat,i)=>(
-                        <option key={i} value={cat.id}> {cat.nombre} 
-                        </option>
-                    ))}
-                    </datalist>*/}
                     <select 
                     className="form-control"
                     name="id_categoria"
