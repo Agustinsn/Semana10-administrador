@@ -1,5 +1,14 @@
 import React,{useRef} from 'react'
+import {subirArchivo} from '../services/productoService'
 
+//Esta variable va a permitir manejar archivo
+let imagenes;
+
+const asyncForEach = async(array, callback) => {
+    for(let i = 0; i < array.length; i++){
+      await callback(array[i]) //Se detiene la ejecución hasta que termine
+    }
+  }
 function FormProductos({
     value,
     actualizarInput,
@@ -21,17 +30,30 @@ function FormProductos({
 
     const anadirFoto=(e)=>{
         e.preventDefault()
-        let nuevaFoto=inputFotos.current.value
-        setValue({...value,fotos:[...value.fotos,nuevaFoto]})
+
+/*         let nuevaFoto=inputFotos.current.value
+        setValue({...value,fotos:[...value.fotos,nuevaFoto]}) */
     }
 
-   /*  useEffect(()=>{
-        setValue({...value,colores:colores})
-    },[colores]) */
+    const ejecutarSubmit= async(e)=>{
+        e.preventDefault()
+        let urls=[]
+        await asyncForEach(imagenes,async(imagen)=>{
+            let urlImagenSubida= await subirArchivo(imagen)
+            urls.push(urlImagenSubida)
+        })
+        manejarSubmit(e)
+    }
+
+    const manejarImagen=(e)=>{
+        e.preventDefault()
+        let misImagenes=e.target.files
+        imagenes=misImagenes
+    }
 
     return (
         <div>
-            <form onSubmit={(e)=>{manejarSubmit(e)}}>
+            <form onSubmit={(e)=>{ejecutarSubmit(e)}}>
                 <div className="mb-3">
                     <label className="form-label">Nombre</label>
                     <input type="text" 
@@ -86,9 +108,11 @@ function FormProductos({
 
                 <div>
                     <label>Fotos</label>
-                    <input type="texto"
+                    <input type="file"
                     ref={inputFotos}
-                    className="form-control"/>
+                    className="form-control"
+                    onChange={(e)=>{manejarImagen(e)}}
+                    multiple/>
                     <button className="btn btn-primary btn-sm" onClick={(e)=>{anadirFoto(e)}}>Añadir Foto</button>
                     <ul className="list-group">
                         {value.fotos.map((fotito,i)=>(
